@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Patrimonium.Domain.Entities;
+using Property = Patrimonium.Domain.Entities.Property;
 
 namespace Patrimonium.Infrastructure.Data.Context
 {

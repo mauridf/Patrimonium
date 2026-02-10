@@ -1,6 +1,6 @@
 ﻿using Patrimonium.Application.DTOs.Financial;
 
-namespace Patrimonium.Application.UseCases.Financial
+namespace Patrimonium.Application.Interfaces
 {
     public interface ICreateFinancialTransactionUseCase
     {

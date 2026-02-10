@@ -1,6 +1,6 @@
 ﻿using Patrimonium.Application.DTOs.Property;
 
-namespace Patrimonium.Application.UseCases.Properties
+namespace Patrimonium.Application.Interfaces
 {
     public interface ICreatePropertyUseCase
     {

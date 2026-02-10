@@ -2,6 +2,7 @@
 using Patrimonium.Domain.Entities;
 using Patrimonium.Domain.Services;
 using Patrimonium.Domain.Interfaces;
+using Patrimonium.Application.Interfaces;
 
 namespace Patrimonium.Application.UseCases.Financial
 {

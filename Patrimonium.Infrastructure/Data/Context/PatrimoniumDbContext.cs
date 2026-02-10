@@ -13,6 +13,11 @@ namespace Patrimonium.Infrastructure.Data.Context
         public DbSet<User> Users => Set<User>();
         public DbSet<Property> Properties => Set<Property>();
         public DbSet<FinancialTransaction> FinancialTransactions => Set<FinancialTransaction>();
+        public DbSet<Person> People => Set<Person>();
+        public DbSet<Maintenance> Maintenances => Set<Maintenance>();
+        public DbSet<Inspection> Inspections => Set<Inspection>();
+        public DbSet<Document> Documents => Set<Document>();
+        public DbSet<Media> Media => Set<Media>();
 
     }
 }

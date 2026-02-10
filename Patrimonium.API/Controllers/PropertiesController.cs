@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Patrimonium.Application.DTOs.Property;
-using Patrimonium.Application.UseCases.Properties;
+using Patrimonium.Application.Interfaces;
 using System.Security.Claims;
 
 namespace Patrimonium.API.Controllers

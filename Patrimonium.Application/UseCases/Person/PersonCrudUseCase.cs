@@ -1,8 +1,11 @@
 ﻿using Patrimonium.Domain.Entities;
 using Patrimonium.Domain.Interfaces;
 
-public class PersonCrudUseCase : BaseCrudUseCase<Person>
+namespace Patrimonium.Application.UseCases.Persons
 {
-    public PersonCrudUseCase(IRepository<Person> repo, IUnitOfWork uow)
-        : base(repo, uow) { }
+    public class PersonCrudUseCase : BaseCrudUseCase<Patrimonium.Domain.Entities.Person>
+    {
+        public PersonCrudUseCase(IRepository<Patrimonium.Domain.Entities.Person> repo, IUnitOfWork uow)
+            : base(repo, uow) { }
+    }
 }

@@ -4,7 +4,7 @@ using Patrimonium.Domain.Entities;
 using Patrimonium.Domain.Interfaces;
 using Patrimonium.Domain.Services;
 
-namespace Patrimonium.Application.UseCases.Inspection
+namespace Patrimonium.Application.UseCases.Inspections
 {
     public class CreateInspectionUseCase : ICreateInspectionUseCase
     {

@@ -9,7 +9,7 @@ using Patrimonium.Application.UseCases.Contract;
 using Patrimonium.Application.UseCases.Dashboard;
 using Patrimonium.Application.UseCases.Document;
 using Patrimonium.Application.UseCases.Financial;
-using Patrimonium.Application.UseCases.Inspection;
+using Patrimonium.Application.UseCases.Inspections;
 using Patrimonium.Application.UseCases.Intelligence;
 using Patrimonium.Application.UseCases.Maintenance;
 using Patrimonium.Application.UseCases.Media;

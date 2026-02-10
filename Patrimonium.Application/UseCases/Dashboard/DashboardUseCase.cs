@@ -35,7 +35,7 @@ namespace Patrimonium.Application.UseCases.Dashboard
             var expiredContracts = contracts.Count(x => x.Status == Domain.Enums.ContractStatus.Expired);
 
             var occupied = activeContracts;
-            var totalProperties = properties.Count;
+            var totalProperties = properties.Count();
             var vacant = totalProperties - occupied;
 
             var avgRent = contracts.Any() ? contracts.Average(x => x.MonthlyValue) : 0;

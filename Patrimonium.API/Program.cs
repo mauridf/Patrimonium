@@ -8,7 +8,8 @@ using Patrimonium.Infrastructure.Auth;
 using Patrimonium.Domain.Interfaces;
 using Patrimonium.Infrastructure.Data;
 using Patrimonium.Infrastructure.Data.Repositories;
-using Patrimonium.Application.Interfaces;
+using Patrimonium.Domain.Services;
+using Patrimonium.Application.UseCases.Properties;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,9 @@ builder.Services.AddDbContext<PatrimoniumDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<PropertyDomainService>();
+
+builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

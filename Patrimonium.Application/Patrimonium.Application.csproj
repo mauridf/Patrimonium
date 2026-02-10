@@ -15,7 +15,6 @@
     <Folder Include="Mappings\" />
     <Folder Include="Validators\" />
     <Folder Include="Queries\" />
-    <Folder Include="UseCases\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

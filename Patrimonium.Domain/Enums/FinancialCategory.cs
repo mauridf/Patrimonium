@@ -11,6 +11,9 @@
         Maintenance = 7,
         Insurance = 8,
         Management = 9,
+        Tax = 10,
+        Fine = 11,
+        Adjustment = 12,
         Other = 99
     }
 }

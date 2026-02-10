@@ -34,6 +34,8 @@ builder.Services.AddScoped<InspectionDomainService>();
 builder.Services.AddScoped<DocumentDomainService>();
 builder.Services.AddScoped<MediaDomainService>();
 builder.Services.AddScoped<ContractDomainService>();
+builder.Services.AddScoped<FinancialEngineService>();
+
 builder.Services.AddScoped<ICreateContractUseCase, CreateContractUseCase>();
 builder.Services.AddScoped<ICreateMediaUseCase, CreateMediaUseCase>();
 builder.Services.AddScoped<ICreateDocumentUseCase, CreateDocumentUseCase>();

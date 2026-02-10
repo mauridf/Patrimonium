@@ -19,5 +19,6 @@ namespace Patrimonium.Domain.Entities
 
         // Navegação
         public Property Property { get; set; } = default!;
+        public Contract? Contract { get; set; }
     }
 }

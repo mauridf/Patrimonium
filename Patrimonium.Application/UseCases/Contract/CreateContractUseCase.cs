@@ -10,15 +10,18 @@ namespace Patrimonium.Application.UseCases.Contract
     public class CreateContractUseCase : ICreateContractUseCase
     {
         private readonly IRepository<Domain.Entities.Contract> _repo;
+        private readonly IRepository<FinancialTransaction> _financialRepo;
         private readonly IUnitOfWork _uow;
         private readonly ContractDomainService _domain;
 
         public CreateContractUseCase(
             IRepository<Domain.Entities.Contract> repo,
+                IRepository<FinancialTransaction> financialRepo,
             IUnitOfWork uow,
             ContractDomainService domain)
         {
             _repo = repo;
+            _financialRepo = financialRepo;
             _uow = uow;
             _domain = domain;
         }
@@ -48,6 +51,13 @@ namespace Patrimonium.Application.UseCases.Contract
             _domain.Validate(contract);
 
             await _repo.AddAsync(contract);
+            await _uow.CommitAsync();
+
+            // após salvar contrato
+            var engine = new FinancialEngineService();
+            var rent = engine.GenerateMonthlyRent(contract, DateTime.UtcNow);
+
+            await _financialRepo.AddAsync(rent);
             await _uow.CommitAsync();
 
             return contract.Id;

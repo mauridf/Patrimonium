@@ -12,5 +12,7 @@ namespace Patrimonium.Infrastructure.Data.Context
         // DbSets (vão crescer conforme o domínio)
         public DbSet<User> Users => Set<User>();
         public DbSet<Property> Properties => Set<Property>();
+        public DbSet<FinancialTransaction> FinancialTransactions => Set<FinancialTransaction>();
+
     }
 }

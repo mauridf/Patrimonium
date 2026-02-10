@@ -10,6 +10,7 @@ using Patrimonium.Infrastructure.Data;
 using Patrimonium.Infrastructure.Data.Repositories;
 using Patrimonium.Domain.Services;
 using Patrimonium.Application.UseCases.Properties;
+using Patrimonium.Application.UseCases.Financial;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,9 @@ builder.Services.AddDbContext<PatrimoniumDbContext>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<PropertyDomainService>();
+builder.Services.AddScoped<FinancialDomainService>();
 
+builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

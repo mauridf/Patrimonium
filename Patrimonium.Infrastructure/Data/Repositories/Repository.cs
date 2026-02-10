@@ -22,6 +22,11 @@ namespace Patrimonium.Infrastructure.Data.Repositories
         public async Task<IEnumerable<T>> GetAllAsync()
             => await _dbSet.AsNoTracking().ToListAsync();
 
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.Where(predicate).ToListAsync();
+        }
+
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
             => await _dbSet.Where(predicate).AsNoTracking().ToListAsync();
 

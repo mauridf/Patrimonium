@@ -11,10 +11,12 @@ namespace Patrimonium.API.Controllers
     public class DashboardController : ControllerBase
     {
         private readonly IDashboardQueryService _service;
+        private readonly IDashboardUseCase _useCase;
 
-        public DashboardController(IDashboardQueryService service)
+        public DashboardController(IDashboardQueryService service, IDashboardUseCase useCase)
         {
             _service = service;
+            _useCase = useCase;
         }
 
         [HttpGet]
@@ -22,6 +24,14 @@ namespace Patrimonium.API.Controllers
         {
             var userId = Guid.Parse(User.FindFirstValue("userId")!);
             var data = await _service.GetDashboardAsync(userId, month, year);
+            return Ok(data);
+        }
+
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSummary()
+        {
+            var userId = Guid.Parse(User.FindFirstValue("userId")!);
+            var data = await _useCase.GetSummaryAsync(userId);
             return Ok(data);
         }
     }

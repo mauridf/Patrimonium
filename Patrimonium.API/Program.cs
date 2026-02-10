@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Patrimonium.Application.Interfaces;
 using Patrimonium.Application.UseCases.Contract;
+using Patrimonium.Application.UseCases.Dashboard;
 using Patrimonium.Application.UseCases.Document;
 using Patrimonium.Application.UseCases.Financial;
 using Patrimonium.Application.UseCases.Inspection;
@@ -35,7 +36,7 @@ builder.Services.AddScoped<DocumentDomainService>();
 builder.Services.AddScoped<MediaDomainService>();
 builder.Services.AddScoped<ContractDomainService>();
 builder.Services.AddScoped<FinancialEngineService>();
-
+builder.Services.AddScoped<IDashboardUseCase, DashboardUseCase>();
 builder.Services.AddScoped<ICreateContractUseCase, CreateContractUseCase>();
 builder.Services.AddScoped<ICreateMediaUseCase, CreateMediaUseCase>();
 builder.Services.AddScoped<ICreateDocumentUseCase, CreateDocumentUseCase>();

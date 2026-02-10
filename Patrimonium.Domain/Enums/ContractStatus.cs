@@ -6,6 +6,7 @@
         Active = 2,     // Ativo
         Suspended = 3,  // Suspenso
         Finished = 4,   // Encerrado
-        Cancelled = 5   // Cancelado
+        Cancelled = 5,   // Cancelado
+        Expired = 6    // Expirado
     }
 }

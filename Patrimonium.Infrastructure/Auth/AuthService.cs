@@ -1,32 +1,35 @@
-﻿using BCrypt.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Patrimonium.Application.DTOs.Auth;
 using Patrimonium.Application.Interfaces;
 using Patrimonium.Domain.Entities;
+using Patrimonium.Domain.Interfaces;
 using Patrimonium.Infrastructure.Data.Context;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Patrimonium.Infrastructure.Auth
 {
     public class AuthService : IAuthService
     {
-        private readonly PatrimoniumDbContext _context;
+        private readonly IUserRepository _userRepo;
+        private readonly IUnitOfWork _uow;
         private readonly IConfiguration _config;
 
-        public AuthService(PatrimoniumDbContext context, IConfiguration config)
+        public AuthService(IUserRepository userRepo, IUnitOfWork uow, IConfiguration config)
         {
-            _context = context;
+            _userRepo = userRepo;
+            _uow = uow;
             _config = config;
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-                throw new Exception("Usuário já existe");
+            var existing = await _userRepo.GetByEmailAsync(dto.Email);
+            if (existing != null) throw new Exception("Usuário já existe");
 
             var user = new User
             {
@@ -40,15 +43,15 @@ namespace Patrimonium.Infrastructure.Auth
                 CreatedBy = "system"
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _userRepo.AddAsync(user);
+            await _uow.CommitAsync();
 
             return GenerateToken(user);
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            var user = await _userRepo.GetByEmailAsync(dto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 throw new Exception("Credenciais inválidas");

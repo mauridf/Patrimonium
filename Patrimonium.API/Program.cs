@@ -5,6 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Patrimonium.Application.Interfaces;
 using Patrimonium.Infrastructure.Auth;
+using Patrimonium.Domain.Interfaces;
+using Patrimonium.Infrastructure.Data;
+using Patrimonium.Infrastructure.Data.Repositories;
+using Patrimonium.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,10 @@ builder.Services.AddDbContext<PatrimoniumDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 var jwt = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwt["Key"]!);

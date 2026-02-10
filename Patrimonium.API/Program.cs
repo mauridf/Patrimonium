@@ -11,6 +11,7 @@ using Patrimonium.Infrastructure.Data.Repositories;
 using Patrimonium.Domain.Services;
 using Patrimonium.Application.UseCases.Properties;
 using Patrimonium.Application.UseCases.Financial;
+using Patrimonium.Infrastructure.Data.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<PatrimoniumDbContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<PropertyDomainService>();
 builder.Services.AddScoped<FinancialDomainService>();
+builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 
 builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();

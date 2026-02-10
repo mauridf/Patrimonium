@@ -2,7 +2,7 @@
 
 namespace Patrimonium.Domain.Entities
 {
-    public class Media : BaseEntity
+    public class Media : AuditableEntity
     {
         public Guid PropertyId { get; set; }
         public MediaType Type { get; set; }

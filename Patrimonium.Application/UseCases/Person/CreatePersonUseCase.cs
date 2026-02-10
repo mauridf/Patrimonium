@@ -33,6 +33,10 @@ namespace Patrimonium.Application.UseCases.Person
                 CpfCnpj = dto.CpfCnpj,
                 Email = dto.Email,
                 Phone = dto.Phone,
+                Profession = dto.Profession,
+                IncomeEstimation = dto.IncomeEstimation,
+                ScoreInternal = dto.ScoreInternal,
+                Notes = dto.Notes,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = userId.ToString()
             };

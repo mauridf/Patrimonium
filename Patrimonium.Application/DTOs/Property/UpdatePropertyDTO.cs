@@ -2,7 +2,7 @@
 
 namespace Patrimonium.Application.DTOs.Property
 {
-    public class CreatePropertyDto
+    public class UpdatePropertyDTO
     {
         public string InternalName { get; set; } = default!;
         public PropertyType Type { get; set; }

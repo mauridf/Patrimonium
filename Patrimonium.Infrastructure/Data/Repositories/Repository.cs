@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Patrimonium.Domain.Entities;
 using Patrimonium.Domain.Interfaces;
 using Patrimonium.Infrastructure.Data.Context;
 using System.Linq.Expressions;
 
 namespace Patrimonium.Infrastructure.Data.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : AuditableEntity
     {
         protected readonly PatrimoniumDbContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -40,7 +41,15 @@ namespace Patrimonium.Infrastructure.Data.Repositories
         public void Update(T entity)
             => _dbSet.Update(entity);
 
-        public void Remove(T entity)
-            => _dbSet.Remove(entity);
+        public async Task SoftDeleteAsync(Guid id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity == null) return;
+
+            entity.DeletedAt = DateTime.UtcNow;
+
+            _dbSet.Update(entity);
+        }
+
     }
 }

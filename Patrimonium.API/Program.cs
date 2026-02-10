@@ -27,22 +27,27 @@ using Patrimonium.Infrastructure.Persistence.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<PatrimoniumDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+// Interceptor
 builder.Services.AddScoped<AuditInterceptor>();
 
+// DbContext (com interceptor + Npgsql)
 builder.Services.AddDbContext<PatrimoniumDbContext>((sp, options) =>
 {
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
     options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
 });
 
+// Infra
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+// Auth / Security
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Domain Services
 builder.Services.AddScoped<PropertyDomainService>();
 builder.Services.AddScoped<FinancialDomainService>();
-builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 builder.Services.AddScoped<MaintenanceDomainService>();
 builder.Services.AddScoped<PersonDomainService>();
 builder.Services.AddScoped<InspectionDomainService>();
@@ -52,22 +57,26 @@ builder.Services.AddScoped<ContractDomainService>();
 builder.Services.AddScoped<FinancialEngineService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<IGovernanceService, GovernanceService>();
+
+// Queries
+builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
+
+// UseCases
 builder.Services.AddScoped<AutomationUseCase>();
 builder.Services.AddScoped<IIntelligenceUseCase, IntelligenceUseCase>();
 builder.Services.AddScoped<ISimulationUseCase, SimulationUseCase>();
 builder.Services.AddScoped<IDashboardUseCase, DashboardUseCase>();
+
 builder.Services.AddScoped<ICreateContractUseCase, CreateContractUseCase>();
 builder.Services.AddScoped<ICreateMediaUseCase, CreateMediaUseCase>();
 builder.Services.AddScoped<ICreateDocumentUseCase, CreateDocumentUseCase>();
 builder.Services.AddScoped<ICreateInspectionUseCase, CreateInspectionUseCase>();
 builder.Services.AddScoped<ICreatePersonUseCase, CreatePersonUseCase>();
-builder.Services.AddScoped<ICreateMaintenanceUseCase,CreateMaintenanceUseCase>();
+builder.Services.AddScoped<ICreateMaintenanceUseCase, CreateMaintenanceUseCase>();
 builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
+// JWT
 var jwt = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
 
@@ -92,6 +101,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// API
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Patrimonium.Domain.Entities;
 using Property = Patrimonium.Domain.Entities.Property;
@@ -28,10 +29,14 @@ namespace Patrimonium.Infrastructure.Data.Context
             {
                 if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
                 {
-                    modelBuilder.Entity(entityType.ClrType)
-                        .HasQueryFilter(
-                            EF.Property<bool>(EF.Property<object>(null!, "IsDeleted"), "IsDeleted") == false
-                        );
+                    var parameter = Expression.Parameter(entityType.ClrType, "e");
+
+                    var prop = Expression.Property(parameter, "IsDeleted");
+                    var condition = Expression.Equal(prop, Expression.Constant(false));
+
+                    var lambda = Expression.Lambda(condition, parameter);
+
+                    modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
                 }
             }
 

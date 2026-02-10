@@ -19,6 +19,41 @@ namespace Patrimonium.Infrastructure.Data.Context
         public DbSet<Document> Documents => Set<Document>();
         public DbSet<Media> Media => Set<Media>();
         public DbSet<Contract> Contracts => Set<Contract>();
+        public DbSet<Alert> Alerts => Set<Alert>();
+        public DbSet<SystemEvent> SystemEvents => Set<SystemEvent>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    modelBuilder.Entity(entityType.ClrType)
+                        .HasQueryFilter(
+                            EF.Property<bool>(EF.Property<object>(null!, "IsDeleted"), "IsDeleted") == false
+                        );
+                }
+            }
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+        public async Task<int> SaveChangesTransactionalAsync()
+        {
+            using var transaction = await Database.BeginTransactionAsync();
+            try
+            {
+                var result = await SaveChangesAsync();
+                await transaction.CommitAsync();
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
 
     }
 }

@@ -22,9 +22,13 @@ namespace Patrimonium.Infrastructure.Data.Repositories
         public async Task<IEnumerable<T>> GetAllAsync()
             => await _dbSet.AsNoTracking().ToListAsync();
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, bool tracking = false)
         {
-            return await _dbSet.Where(predicate).ToListAsync();
+            var query = _dbSet.Where(predicate);
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)

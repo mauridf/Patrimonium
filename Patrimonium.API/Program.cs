@@ -23,11 +23,21 @@ using Patrimonium.Infrastructure.Data;
 using Patrimonium.Infrastructure.Data.Context;
 using Patrimonium.Infrastructure.Data.Queries;
 using Patrimonium.Infrastructure.Data.Repositories;
+using Patrimonium.Infrastructure.Persistence.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<PatrimoniumDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<AuditInterceptor>();
+
+builder.Services.AddDbContext<PatrimoniumDbContext>((sp, options) =>
+{
+    options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
+});
+
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<PropertyDomainService>();
@@ -55,7 +65,6 @@ builder.Services.AddScoped<ICreateMaintenanceUseCase,CreateMaintenanceUseCase>()
 builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 

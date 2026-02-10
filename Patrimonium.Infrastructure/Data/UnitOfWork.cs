@@ -17,5 +17,10 @@ namespace Patrimonium.Infrastructure.Data
 
         public void Dispose()
             => _context.Dispose();
+
+        public async Task RollbackAsync()
+        {
+            await _context.Database.RollbackTransactionAsync();
+        }
     }
 }

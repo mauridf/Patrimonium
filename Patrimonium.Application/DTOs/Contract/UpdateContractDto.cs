@@ -2,11 +2,8 @@
 
 namespace Patrimonium.Application.DTOs.Contract
 {
-    public class CreateContractDto
+    public class UpdateContractDto
     {
-        public Guid PropertyId { get; set; }
-        public Guid PersonId { get; set; } // Inquilino / Comprador
-
         public ContractType Type { get; set; }
         public ContractStatus Status { get; set; }
 
@@ -23,4 +20,5 @@ namespace Patrimonium.Application.DTOs.Contract
 
         public decimal FinePercentage { get; set; }
     }
+
 }

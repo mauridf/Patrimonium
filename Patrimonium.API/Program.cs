@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Patrimonium.API.Middlewares;
@@ -27,27 +28,59 @@ using Patrimonium.Infrastructure.Data.Repositories;
 using Patrimonium.Infrastructure.Persistence.Interceptors;
 using Serilog;
 
+Console.WriteLine("==== INICIO Program.cs ====");
+
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 
-// Interceptor
+Console.WriteLine("1 - Builder criado");
+
+// ===== VARIÁVEIS DE AMBIENTE / CONFIG =====
+var connStr = config.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connStr))
+{
+    Console.WriteLine("❌ ERRO CRÍTICO: DefaultConnection não encontrada (env/config).");
+    throw new Exception("ConnectionString DefaultConnection não configurada.");
+}
+
+var jwtSection = config.GetSection("Jwt");
+if (!jwtSection.Exists())
+{
+    Console.WriteLine("❌ ERRO CRÍTICO: Seção Jwt não encontrada.");
+    throw new Exception("Config Jwt ausente.");
+}
+
+Console.WriteLine("2 - Config valida (ConnectionString + JWT)");
+
+// ===== INTERCEPTOR =====
 builder.Services.AddScoped<AuditInterceptor>();
+Console.WriteLine("3 - AuditInterceptor registrado");
 
-// DbContext (com interceptor + Npgsql)
+// ===== DB CONTEXT =====
 builder.Services.AddDbContext<PatrimoniumDbContext>((sp, options) =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    Console.WriteLine(">>> Configurando DbContext");
+
+    options.UseNpgsql(connStr);
+
+    // ⚠️ PONTO PERIGOSO
+    // Se AuditInterceptor resolver serviços, I/O, async bloqueado, etc → trava
     options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
 });
 
-// Infra
+Console.WriteLine("4 - DbContext configurado");
+
+// ===== INFRA =====
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+Console.WriteLine("5 - Infra OK");
 
-// Auth / Security
+// ===== AUTH =====
 builder.Services.AddScoped<IAuthService, AuthService>();
+Console.WriteLine("6 - AuthService OK");
 
-// Domain Services
+// ===== DOMAIN SERVICES =====
 builder.Services.AddScoped<PropertyDomainService>();
 builder.Services.AddScoped<FinancialDomainService>();
 builder.Services.AddScoped<MaintenanceDomainService>();
@@ -59,11 +92,13 @@ builder.Services.AddScoped<ContractDomainService>();
 builder.Services.AddScoped<FinancialEngineService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<IGovernanceService, GovernanceService>();
+Console.WriteLine("7 - DomainServices OK");
 
-// Queries
+// ===== QUERIES =====
 builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
+Console.WriteLine("8 - Queries OK");
 
-// UseCases
+// ===== USECASES =====
 builder.Services.AddScoped<AutomationUseCase>();
 builder.Services.AddScoped<IIntelligenceUseCase, IntelligenceUseCase>();
 builder.Services.AddScoped<ISimulationUseCase, SimulationUseCase>();
@@ -78,29 +113,35 @@ builder.Services.AddScoped<ICreateMaintenanceUseCase, CreateMaintenanceUseCase>(
 builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
 
+Console.WriteLine("9 - UseCases OK");
+
+// ===== SERILOG =====
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
     .WriteTo.Console()
-    .WriteTo.File("logs/patrimonium-.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 builder.Host.UseSerilog();
 
-// JWT
-var jwt = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
+Console.WriteLine("10 - Serilog OK");
 
-builder.Services.AddAuthentication(options =>
+// ===== JWT =====
+var jwt = jwtSection;
+var keyStr = jwt["Key"];
+
+if (string.IsNullOrWhiteSpace(keyStr))
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
+    Console.WriteLine("❌ ERRO CRÍTICO: Jwt:Key não definido.");
+    throw new Exception("Jwt:Key ausente.");
+}
+
+var key = Encoding.UTF8.GetBytes(keyStr);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(opt =>
 {
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+    opt.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
@@ -112,27 +153,57 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection"));
+Console.WriteLine("11 - JWT OK");
 
-// API
+// ===== RATELIMITER =====
+builder.Services.AddRateLimiter(x =>
+{
+    x.AddFixedWindowLimiter("default", opt =>
+    {
+        opt.Window = TimeSpan.FromSeconds(10);
+        opt.PermitLimit = 100;
+    });
+});
+
+Console.WriteLine("12 - RateLimiter OK");
+
+// ===== HEALTH =====
+builder.Services.AddHealthChecks();
+Console.WriteLine("13 - HealthChecks OK");
+
+// ===== API =====
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+Console.WriteLine("14 - API services OK");
+
+// ===== BUILD =====
+Console.WriteLine("15 - Antes do Build()");
 var app = builder.Build();
+Console.WriteLine("16 - Depois do Build()");
 
+// ===== PIPELINE =====
 app.UseMiddleware<RequestLoggingMiddleware>();
+Console.WriteLine("17 - Middleware OK");
 
+app.UseRateLimiter();
 app.MapHealthChecks("/health");
+Console.WriteLine("18 - RateLimiter + Health OK");
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    Console.WriteLine("19 - Swagger OK");
 }
 
 app.UseAuthentication();
 app.UseAuthorization();
+Console.WriteLine("20 - Auth pipeline OK");
+
 app.MapControllers();
+Console.WriteLine("21 - Controllers OK");
+
+Console.WriteLine("22 - Antes do app.Run()");
 app.Run();

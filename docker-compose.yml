@@ -1,0 +1,24 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+      - seq
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: patrimonium
+      POSTGRES_USER: patrimonium
+      POSTGRES_PASSWORD: patrimonium
+
+  redis:
+    image: redis:7
+
+  seq:
+    image: datalust/seq
+    ports:
+      - "5341:80"

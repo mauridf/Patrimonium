@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Patrimonium.Application.DTOs.Person;
 using Patrimonium.Application.Interfaces;
+using Patrimonium.Application.UseCases.Persons;
 using Patrimonium.Domain.Entities;
 
 namespace Patrimonium.API.Controllers

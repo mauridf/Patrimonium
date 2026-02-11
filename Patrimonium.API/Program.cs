@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Patrimonium.API.Middlewares;
 using Patrimonium.Application.Interfaces;
 using Patrimonium.Application.Services;
 using Patrimonium.Application.UseCases.Automation;
@@ -24,6 +25,7 @@ using Patrimonium.Infrastructure.Data.Context;
 using Patrimonium.Infrastructure.Data.Queries;
 using Patrimonium.Infrastructure.Data.Repositories;
 using Patrimonium.Infrastructure.Persistence.Interceptors;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +78,15 @@ builder.Services.AddScoped<ICreateMaintenanceUseCase, CreateMaintenanceUseCase>(
 builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File("logs/patrimonium-.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 // JWT
 var jwt = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
@@ -101,12 +112,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection"));
+
 // API
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
+
+app.MapHealthChecks("/health");
 
 if (app.Environment.IsDevelopment())
 {

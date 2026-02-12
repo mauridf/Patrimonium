@@ -96,6 +96,7 @@ Console.WriteLine("7 - DomainServices OK");
 
 // ===== QUERIES =====
 builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
+builder.Services.AddScoped<ContractQueryService>();
 Console.WriteLine("8 - Queries OK");
 
 // ===== USECASES =====
@@ -112,6 +113,9 @@ builder.Services.AddScoped<ICreatePersonUseCase, CreatePersonUseCase>();
 builder.Services.AddScoped<ICreateMaintenanceUseCase, CreateMaintenanceUseCase>();
 builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
+
+
+builder.Services.AddScoped<IContractLifecycleUseCase, ContractLifecycleUseCase>();
 
 Console.WriteLine("9 - UseCases OK");
 

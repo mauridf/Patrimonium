@@ -28,57 +28,52 @@ using Patrimonium.Infrastructure.Data.Repositories;
 using Patrimonium.Infrastructure.Persistence.Interceptors;
 using Serilog;
 
-Console.WriteLine("==== INICIO Program.cs ====");
-
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-Console.WriteLine("1 - Builder criado");
+#region CONFIG LOAD (ENV → APPSETTINGS → ERROR)
 
-// ===== VARIÁVEIS DE AMBIENTE / CONFIG =====
-var connStr = config.GetConnectionString("DefaultConnection");
-if (string.IsNullOrWhiteSpace(connStr))
-{
-    Console.WriteLine("❌ ERRO CRÍTICO: DefaultConnection não encontrada (env/config).");
-    throw new Exception("ConnectionString DefaultConnection não configurada.");
-}
+// ConnectionString
+var envConn = Environment.GetEnvironmentVariable("DB_CONNECTION");
+var appConn = config.GetConnectionString("DefaultConnection");
 
+var connStr = !string.IsNullOrWhiteSpace(envConn)
+    ? envConn
+    : appConn;
+
+if (string.IsNullOrWhiteSpace(connStr) || connStr.StartsWith("${"))
+    throw new Exception("ConnectionString não configurada. Defina DB_CONNECTION ou appsettings.");
+
+// JWT
+var jwtKeyEnv = Environment.GetEnvironmentVariable("JWT_KEY");
 var jwtSection = config.GetSection("Jwt");
-if (!jwtSection.Exists())
-{
-    Console.WriteLine("❌ ERRO CRÍTICO: Seção Jwt não encontrada.");
-    throw new Exception("Config Jwt ausente.");
-}
 
-Console.WriteLine("2 - Config valida (ConnectionString + JWT)");
+var jwtKey = !string.IsNullOrWhiteSpace(jwtKeyEnv)
+    ? jwtKeyEnv
+    : jwtSection["Key"];
+
+if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.StartsWith("${"))
+    throw new Exception("JWT_KEY não configurado.");
+
+#endregion
 
 // ===== INTERCEPTOR =====
 builder.Services.AddScoped<AuditInterceptor>();
-Console.WriteLine("3 - AuditInterceptor registrado");
 
 // ===== DB CONTEXT =====
 builder.Services.AddDbContext<PatrimoniumDbContext>((sp, options) =>
 {
-    Console.WriteLine(">>> Configurando DbContext");
-
     options.UseNpgsql(connStr);
-
-    // ⚠️ PONTO PERIGOSO
-    // Se AuditInterceptor resolver serviços, I/O, async bloqueado, etc → trava
     options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
 });
-
-Console.WriteLine("4 - DbContext configurado");
 
 // ===== INFRA =====
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-Console.WriteLine("5 - Infra OK");
 
 // ===== AUTH =====
 builder.Services.AddScoped<IAuthService, AuthService>();
-Console.WriteLine("6 - AuthService OK");
 
 // ===== DOMAIN SERVICES =====
 builder.Services.AddScoped<PropertyDomainService>();
@@ -92,12 +87,10 @@ builder.Services.AddScoped<ContractDomainService>();
 builder.Services.AddScoped<FinancialEngineService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<IGovernanceService, GovernanceService>();
-Console.WriteLine("7 - DomainServices OK");
 
 // ===== QUERIES =====
 builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 builder.Services.AddScoped<ContractQueryService>();
-Console.WriteLine("8 - Queries OK");
 
 // ===== USECASES =====
 builder.Services.AddScoped<AutomationUseCase>();
@@ -114,33 +107,22 @@ builder.Services.AddScoped<ICreateMaintenanceUseCase, CreateMaintenanceUseCase>(
 builder.Services.AddScoped<ICreateFinancialTransactionUseCase, CreateFinancialTransactionUseCase>();
 builder.Services.AddScoped<ICreatePropertyUseCase, CreatePropertyUseCase>();
 
-
 builder.Services.AddScoped<IContractLifecycleUseCase, ContractLifecycleUseCase>();
-
-Console.WriteLine("9 - UseCases OK");
+builder.Services.AddScoped<IProjectionEngine, ProjectionEngine>();
+builder.Services.AddScoped<IValuationEngine, ValuationEngine>();
+builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IVacancyEngine, VacancyEngine>();
 
 // ===== SERILOG =====
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
+    .ReadFrom.Configuration(config)
     .Enrich.FromLogContext()
-    .WriteTo.Console()
     .CreateLogger();
 
 builder.Host.UseSerilog();
 
-Console.WriteLine("10 - Serilog OK");
-
 // ===== JWT =====
-var jwt = jwtSection;
-var keyStr = jwt["Key"];
-
-if (string.IsNullOrWhiteSpace(keyStr))
-{
-    Console.WriteLine("❌ ERRO CRÍTICO: Jwt:Key não definido.");
-    throw new Exception("Jwt:Key ausente.");
-}
-
-var key = Encoding.UTF8.GetBytes(keyStr);
+var key = Encoding.UTF8.GetBytes(jwtKey);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(opt =>
@@ -151,63 +133,63 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwt["Issuer"],
-        ValidAudience = jwt["Audience"],
+        ValidIssuer = jwtSection["Issuer"],
+        ValidAudience = jwtSection["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
-
-Console.WriteLine("11 - JWT OK");
 
 // ===== RATELIMITER =====
 builder.Services.AddRateLimiter(x =>
 {
     x.AddFixedWindowLimiter("default", opt =>
     {
-        opt.Window = TimeSpan.FromSeconds(10);
-        opt.PermitLimit = 100;
+        opt.Window = TimeSpan.FromSeconds(
+            config.GetValue<int>("RateLimit:WindowSeconds", 10)
+        );
+        opt.PermitLimit = config.GetValue<int>("RateLimit:PermitLimit", 100);
     });
 });
 
-Console.WriteLine("12 - RateLimiter OK");
-
 // ===== HEALTH =====
 builder.Services.AddHealthChecks();
-Console.WriteLine("13 - HealthChecks OK");
+
+// ===== CORS (frontend ready) =====
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("frontend", policy =>
+    {
+        policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .SetIsOriginAllowed(_ => true); // depois troca por domínio real
+    });
+});
 
 // ===== API =====
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-Console.WriteLine("14 - API services OK");
-
-// ===== BUILD =====
-Console.WriteLine("15 - Antes do Build()");
 var app = builder.Build();
-Console.WriteLine("16 - Depois do Build()");
 
 // ===== PIPELINE =====
 app.UseMiddleware<RequestLoggingMiddleware>();
-Console.WriteLine("17 - Middleware OK");
 
 app.UseRateLimiter();
 app.MapHealthChecks("/health");
-Console.WriteLine("18 - RateLimiter + Health OK");
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    Console.WriteLine("19 - Swagger OK");
 }
+
+app.UseCors("frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
-Console.WriteLine("20 - Auth pipeline OK");
 
 app.MapControllers();
-Console.WriteLine("21 - Controllers OK");
-
-Console.WriteLine("22 - Antes do app.Run()");
 app.Run();

@@ -12,5 +12,6 @@ namespace Patrimonium.Domain.Interfaces
         Task AddAsync(T entity);
         void Update(T entity);
         Task SoftDeleteAsync(Guid id);
+        IQueryable<T> Query();
     }
 }

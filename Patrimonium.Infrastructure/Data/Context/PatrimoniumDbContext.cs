@@ -22,6 +22,8 @@ namespace Patrimonium.Infrastructure.Data.Context
         public DbSet<Contract> Contracts => Set<Contract>();
         public DbSet<Alert> Alerts => Set<Alert>();
         public DbSet<SystemEvent> SystemEvents => Set<SystemEvent>();
+        public DbSet<Billing> Billings => Set<Billing>();
+        public DbSet<Vacancy> Vacancies => Set<Vacancy>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

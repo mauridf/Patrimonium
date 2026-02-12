@@ -65,14 +65,14 @@ namespace Patrimonium.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public override async Task<IActionResult> GetAll()
         {
             var userId = Guid.Parse(User.FindFirstValue("userId")!);
             return Ok(await _query.GetAll(userId));
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public override async Task<IActionResult> GetById(Guid id)
         {
             var list = await _query.GetAll(Guid.Parse(User.FindFirstValue("userId")!));
             var c = list.FirstOrDefault(x => x.Id == id);

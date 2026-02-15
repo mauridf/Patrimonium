@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Patrimonium.Application\Patrimonium.Application.csproj" />
+    <ProjectReference Include="..\Patrimonium.Domain\Patrimonium.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Context\" />
+    <Folder Include="Data\Mappings\" />
+    <Folder Include="Auth\" />
+    <Folder Include="Observability\" />
+    <Folder Include="Storage\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+</Project>

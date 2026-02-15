@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Patrimonium.API/Patrimonium.API.csproj" />
+  <Project Path="Patrimonium.Application/Patrimonium.Application.csproj" />
+  <Project Path="Patrimonium.Domain/Patrimonium.Domain.csproj" />
+  <Project Path="Patrimonium.Infrastructure/Patrimonium.Infrastructure.csproj" />
+</Solution>

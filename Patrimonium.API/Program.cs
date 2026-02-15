@@ -62,12 +62,14 @@ builder.Services
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<PropertyService>();
 builder.Services.AddScoped<PersonService>();
+builder.Services.AddScoped<ContractService>();
 
 // Interfaces
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+builder.Services.AddScoped<IContractRepository, ContractRepository>();
 
 #endregion
 

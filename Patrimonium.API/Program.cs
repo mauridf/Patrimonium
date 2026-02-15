@@ -60,10 +60,12 @@ builder.Services
 
 // Services
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<PropertyService>();
 
 // Interfaces
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 
 #endregion
 

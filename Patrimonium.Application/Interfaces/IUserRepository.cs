@@ -1,0 +1,12 @@
+﻿using Patrimonium.Domain.Entities;
+
+namespace Patrimonium.Application.Interfaces
+{
+    public interface IUserRepository
+    {
+        Task<bool> EmailExists(string email);
+        Task<User?> GetByEmail(string email);
+        Task Add(User user);
+        Task SaveChanges();
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Patrimonium.Application.Interfaces;
 using Patrimonium.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Patrimonium.Infrastructure.Auth
 {
-    public class JwtService
+    public class JwtService : IJwtService
     {
         private readonly IConfiguration _config;
 

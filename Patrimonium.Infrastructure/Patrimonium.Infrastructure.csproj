@@ -15,7 +15,6 @@
     <Folder Include="Data\Mappings\" />
     <Folder Include="Observability\" />
     <Folder Include="Storage\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,6 +6,7 @@ using Patrimonium.Application.Interfaces;
 using Patrimonium.Application.Services;
 using Patrimonium.Infrastructure.Auth;
 using Patrimonium.Infrastructure.Data.Context;
+using Patrimonium.Infrastructure.Queries;
 using Patrimonium.Infrastructure.Repositories;
 using Patrimonium.Infrastructure.Storage;
 
@@ -70,6 +71,7 @@ builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<DocumentService>();
 builder.Services.AddScoped<MediaService>();
 builder.Services.AddScoped<InspectionService>();
+builder.Services.AddScoped<IDashboardQueryService, DashboardQueryService>();
 
 // Interfaces
 builder.Services.AddScoped<IJwtService, JwtService>();

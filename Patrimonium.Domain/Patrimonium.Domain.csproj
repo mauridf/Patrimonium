@@ -10,7 +10,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Events\" />
     <Folder Include="Rules\" />
-    <Folder Include="ValueObjects\" />
   </ItemGroup>
 
 </Project>

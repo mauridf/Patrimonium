@@ -6,6 +6,9 @@ using Patrimonium.Application.Interfaces;
 using Patrimonium.Application.Services;
 using Patrimonium.Infrastructure.Auth;
 using Patrimonium.Infrastructure.Data.Context;
+using Patrimonium.Infrastructure.MonthlyClosing.Providers;
+using Patrimonium.Infrastructure.MonthlyClosing.Repositories;
+using Patrimonium.Infrastructure.MonthlyClosing.Services;
 using Patrimonium.Infrastructure.Queries;
 using Patrimonium.Infrastructure.Repositories;
 using Patrimonium.Infrastructure.Storage;
@@ -84,6 +87,18 @@ builder.Services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IMediaRepository, MediaRepository>();
 builder.Services.AddScoped<IInspectionRepository, InspectionRepository>();
+
+// Monthly Closing Engine
+builder.Services.AddScoped<IMonthlyClosingEngine, MonthlyClosingEngine>();
+
+// Providers
+builder.Services.AddScoped<IFinancialDataProvider, FinancialDataProvider>();
+builder.Services.AddScoped<IPropertyDataProvider, PropertyDataProvider>();
+builder.Services.AddScoped<IOperationalDataProvider, OperationalDataProvider>();
+
+// Infra services
+builder.Services.AddScoped<IHashService, Sha256HashService>();
+builder.Services.AddScoped<IMonthlyClosingRepository, MonthlyClosingRepository>();
 
 #endregion
 

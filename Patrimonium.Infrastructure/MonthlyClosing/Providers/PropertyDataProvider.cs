@@ -1,6 +1,7 @@
 ﻿using Patrimonium.Application.DTOs.Consolidation;
 using Patrimonium.Application.Interfaces;
 using Patrimonium.Infrastructure.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Patrimonium.Infrastructure.MonthlyClosing.Providers
 {

@@ -1,4 +1,6 @@
-﻿namespace Patrimonium.Domain.Entities.Snapshot
+﻿using Patrimonium.Domain.Enums;
+
+namespace Patrimonium.Domain.Entities.Snapshot
 {
     public class TransactionSnapshot
     {
@@ -6,8 +8,8 @@
         public Guid PropertyId { get; }
         public Guid? ContractId { get; }
 
-        public string Type { get; }
-        public string Category { get; }
+        public TransactionType Type { get; }
+        public TransactionCategory Category { get; }
         public decimal Amount { get; }
         public DateTime Date { get; }
 
@@ -15,8 +17,8 @@
             Guid transactionId,
             Guid propertyId,
             Guid? contractId,
-            string type,
-            string category,
+            TransactionType type,
+            TransactionCategory category,
             decimal amount,
             DateTime date)
         {

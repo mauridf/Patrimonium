@@ -1,5 +1,7 @@
 ﻿using Patrimonium.Application.Interfaces;
 using Patrimonium.Domain.Entities;
+using Patrimonium.Domain.Entities.Snapshot;
+using Patrimonium.Domain.Enums;
 using Patrimonium.Domain.ValueObjects;
 
 namespace Patrimonium.Application.Services
@@ -36,10 +38,10 @@ namespace Patrimonium.Application.Services
             var operational = await _operationalProvider.GetOperationalDataAsync(userId, year, month);
 
             // 2. Consolidação financeira
-            var income = transactions.Where(t => t.Type == "Income").Sum(t => t.Amount);
-            var expense = transactions.Where(t => t.Type == "Expense").Sum(t => t.Amount);
-            var tax = transactions.Where(t => t.Type == "Tax").Sum(t => t.Amount);
-            var maintenance = transactions.Where(t => t.Type == "Maintenance").Sum(t => t.Amount);
+            var income = transactions.Where(t => t.Type == TransactionType.Income).Sum(t => t.Amount);
+            var expense = transactions.Where(t => t.Type == TransactionType.Expense).Sum(t => t.Amount);
+            var tax = transactions.Where(t => t.Category == TransactionCategory.Tax).Sum(t => t.Amount);
+            var maintenance = transactions.Where(t => t.Category == TransactionCategory.Maintenance).Sum(t => t.Amount);
 
             var financialSnapshot = new FinancialSnapshot(income, expense, tax, maintenance);
 
@@ -78,8 +80,8 @@ namespace Patrimonium.Application.Services
             var propSnapshots = properties.Select(p =>
             {
                 var propTx = transactions.Where(t => t.PropertyId == p.Id);
-                var propIncome = propTx.Where(t => t.Type == "Income").Sum(t => t.Amount);
-                var propExpense = propTx.Where(t => t.Type != "Income").Sum(t => t.Amount);
+                var propIncome = propTx.Where(t => t.Type == TransactionType.Income).Sum(t => t.Amount);
+                var propExpense = propTx.Where(t => t.Type != TransactionType.Expense).Sum(t => t.Amount);
 
                 return new PropertySnapshot(
                     p.Id,

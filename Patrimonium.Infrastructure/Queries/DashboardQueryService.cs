@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Patrimonium.Application.DTOs.Dashboard;
 using Patrimonium.Application.Interfaces;
+using Patrimonium.Domain.Enums;
 using Patrimonium.Infrastructure.Data.Context;
 
 namespace Patrimonium.Infrastructure.Queries
@@ -41,10 +42,12 @@ namespace Patrimonium.Infrastructure.Queries
 
             // Operacional
             var activeProps = await _db.Properties
-                .CountAsync(x => x.UserId == userId && x.Status == "Active" && !x.IsDeleted);
+                .Where(x => x.UserId == userId && x.Status == PropertyStatus.Active && !x.IsDeleted)
+                .CountAsync();
 
             var vacantProps = await _db.Properties
-                .CountAsync(x => x.UserId == userId && x.Status == "Vacant" && !x.IsDeleted);
+                .Where(x => x.UserId == userId && x.Status == PropertyStatus.Vacant && !x.IsDeleted)
+                .CountAsync();
 
             var openMaint = await _db.Maintenances
                 .CountAsync(x => x.UserId == userId &&

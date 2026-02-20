@@ -4,8 +4,10 @@ namespace Patrimonium.Domain.ValueObjects
 {
     public sealed class ClosingPeriod
     {
-        public int Year { get; }
-        public int Month { get; }
+        public int Year { get; private set; }
+        public int Month { get; private set; }
+
+        private ClosingPeriod() { }
 
         public ClosingPeriod(int year, int month)
         {

@@ -1,5 +1,7 @@
-﻿using Patrimonium.Application.DTOs.Consolidation;
+﻿using Microsoft.EntityFrameworkCore;
+using Patrimonium.Application.DTOs.Consolidation;
 using Patrimonium.Application.Interfaces;
+using Patrimonium.Domain.Enums;
 using Patrimonium.Infrastructure.Data.Context;
 
 namespace Patrimonium.Infrastructure.MonthlyClosing.Providers
@@ -15,10 +17,18 @@ namespace Patrimonium.Infrastructure.MonthlyClosing.Providers
 
         public async Task<OperationalDataDto> GetOperationalDataAsync(Guid userId, int year, int month)
         {
-            var activeProps = await _db.Properties.CountAsync(p => p.UserId == userId && p.Status == "Active");
-            var vacantProps = await _db.Properties.CountAsync(p => p.UserId == userId && p.Status == "Vacant");
-            var activeContracts = await _db.Contracts.CountAsync(c => c.UserId == userId && c.Status == "Active");
-            var openMaint = await _db.Maintenances.CountAsync(m => m.UserId == userId && m.Status == "Open");
+            var activeProps = await _db.Properties
+                .Where(p => p.UserId == userId && p.Status == PropertyStatus.Active)
+                .CountAsync();
+            var vacantProps = await _db.Properties
+                .Where(p => p.UserId == userId && p.Status == PropertyStatus.Vacant)
+                .CountAsync();
+            var activeContracts = await _db.Contracts
+                .Where(c => c.UserId == userId && c.Status == ContractStatus.Active)
+                .CountAsync();
+            var openMaint = await _db.Maintenances
+                .Where(m => m.UserId == userId && m.Status == MaintenanceStatus.Open)
+                .CountAsync();
 
             return new OperationalDataDto
             {

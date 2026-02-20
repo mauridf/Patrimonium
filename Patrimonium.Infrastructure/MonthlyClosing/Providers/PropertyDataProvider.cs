@@ -23,8 +23,8 @@ namespace Patrimonium.Infrastructure.MonthlyClosing.Providers
                     InternalName = p.InternalName,
                     Type = p.Type.ToString(),
                     Purpose = p.Purpose.ToString(),
-                    EstimatedValue = p.EstimatedValue,
-                    InvestedValue = p.InvestedValue
+                    EstimatedValue = p.Valuation.EstimatedValue,
+                    InvestedValue = p.Valuation.InvestedValue
                 }).ToListAsync();
         }
     }

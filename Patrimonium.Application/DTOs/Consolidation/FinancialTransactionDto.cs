@@ -1,4 +1,6 @@
-﻿namespace Patrimonium.Application.DTOs.Consolidation
+﻿using Patrimonium.Domain.Enums;
+
+namespace Patrimonium.Application.DTOs.Consolidation
 {
     public class FinancialTransactionDto
     {
@@ -6,8 +8,8 @@
         public Guid PropertyId { get; set; }
         public Guid? ContractId { get; set; }
 
-        public string Type { get; set; } = "";
-        public string Category { get; set; } = "";
+        public TransactionType Type { get; set; }
+        public TransactionCategory Category { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
     }

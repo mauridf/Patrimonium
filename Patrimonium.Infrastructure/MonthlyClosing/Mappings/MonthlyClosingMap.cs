@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Patrimonium.Domain.MonthlyClosing;
+using Patrimonium.Domain.Entities;
 
 namespace Patrimonium.Infrastructure.MonthlyClosing.Mappings
 {
-    public class MonthlyClosingMap : IEntityTypeConfiguration<MonthlyClosing>
+    public class MonthlyClosingMap : IEntityTypeConfiguration<Patrimonium.Domain.Entities.MonthlyClosing>
     {
-        public void Configure(EntityTypeBuilder<MonthlyClosing> builder)
+        public void Configure(EntityTypeBuilder<Patrimonium.Domain.Entities.MonthlyClosing> builder)
         {
             builder.ToTable("month_closings");
 

@@ -1,4 +1,6 @@
-﻿namespace Patrimonium.Domain.ValueObjects
+﻿using Patrimonium.Domain.Exceptions;
+
+namespace Patrimonium.Domain.ValueObjects
 {
     public sealed class ClosingPeriod
     {

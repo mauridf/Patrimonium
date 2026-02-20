@@ -1,4 +1,4 @@
-﻿namespace Patrimonium.Domain.Entities
+﻿namespace Patrimonium.Domain.Entities.Snapshot
 {
     public class PropertySnapshot
     {

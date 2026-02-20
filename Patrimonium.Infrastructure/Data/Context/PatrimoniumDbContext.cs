@@ -18,7 +18,7 @@ namespace Patrimonium.Infrastructure.Data.Context
         public DbSet<Inspection> Inspections => Set<Inspection>();
         public DbSet<Document> Documents => Set<Document>();
         public DbSet<Media> Media => Set<Media>();
-        public DbSet<MonthlyClosing> MonthClosings => Set<MonthlyClosing>();
+        public DbSet<Patrimonium.Domain.Entities.MonthlyClosing> MonthClosings => Set<Patrimonium.Domain.Entities.MonthlyClosing>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

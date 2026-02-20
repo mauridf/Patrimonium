@@ -1,4 +1,5 @@
 ﻿using Patrimonium.Domain.Enums;
+using Patrimonium.Domain.ValueObjects;
 
 namespace Patrimonium.Domain.Entities
 {
@@ -36,6 +37,8 @@ namespace Patrimonium.Domain.Entities
 
         public string? Description { get; private set; }
 
+        public PropertyValuation Valuation { get; private set; }
+
         protected Property() { }
 
         public Property(
@@ -59,7 +62,8 @@ namespace Patrimonium.Domain.Entities
             int suites,
             int parkingSpaces,
             bool furnished,
-            string? description
+            string? description,
+            PropertyValuation valuation = null!
         )
         {
             UserId = userId;
@@ -87,6 +91,7 @@ namespace Patrimonium.Domain.Entities
 
             Furnished = furnished;
             Description = description;
+            Valuation = valuation ?? new PropertyValuation(0, 0);
         }
 
         public void UpdateStatus(PropertyStatus status)

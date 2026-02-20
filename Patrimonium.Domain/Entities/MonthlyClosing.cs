@@ -1,4 +1,6 @@
-﻿using Patrimonium.Domain.Enums;
+﻿using Patrimonium.Domain.Entities.Snapshot;
+using Patrimonium.Domain.Enums;
+using Patrimonium.Domain.Exceptions;
 using Patrimonium.Domain.ValueObjects;
 
 namespace Patrimonium.Domain.Entities

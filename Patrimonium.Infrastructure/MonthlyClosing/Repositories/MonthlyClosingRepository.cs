@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Patrimonium.Application.Interfaces;
-using Patrimonium.Domain.MonthlyClosing;
+using Patrimonium.Domain.Entities;
 using Patrimonium.Infrastructure.Data.Context;
 
 namespace Patrimonium.Infrastructure.MonthlyClosing.Repositories
@@ -14,15 +14,15 @@ namespace Patrimonium.Infrastructure.MonthlyClosing.Repositories
             _db = db;
         }
 
-        public async Task SaveAsync(MonthlyClosing closing)
+        public async Task SaveAsync(Patrimonium.Domain.Entities.MonthlyClosing closing)
         {
-            _db.MonthlyClosings.Add(closing);
+            _db.MonthClosings.Add(closing);
             await _db.SaveChangesAsync();
         }
 
-        public async Task<MonthlyClosing?> GetByPeriodAsync(Guid userId, int year, int month)
+        public async Task<Patrimonium.Domain.Entities.MonthlyClosing?> GetByPeriodAsync(Guid userId, int year, int month)
         {
-            return await _db.MonthlyClosings
+            return await _db.MonthClosings
                 .Include(x => x.Snapshot)
                 .FirstOrDefaultAsync(x =>
                     x.UserId == userId &&

@@ -15,7 +15,7 @@ namespace Patrimonium.Infrastructure.Data.Context
         public DbSet<Contract> Contracts => Set<Contract>();
         public DbSet<FinancialTransaction> FinancialTransactions => Set<FinancialTransaction>();
         public DbSet<Maintenance> Maintenances => Set<Maintenance>();
-        //public DbSet<Inspection> Inspections => Set<Inspection>();
+        public DbSet<Inspection> Inspections => Set<Inspection>();
         public DbSet<Document> Documents => Set<Document>();
         public DbSet<Media> Media => Set<Media>();
         //public DbSet<MonthClosing> MonthClosings => Set<MonthClosing>();

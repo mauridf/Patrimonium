@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DTOs\Dashboard\" />
     <Folder Include="Validators\" />
     <Folder Include="UseCases\" />
   </ItemGroup>

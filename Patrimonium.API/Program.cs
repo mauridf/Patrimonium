@@ -69,6 +69,7 @@ builder.Services.AddScoped<MaintenanceService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<DocumentService>();
 builder.Services.AddScoped<MediaService>();
+builder.Services.AddScoped<InspectionService>();
 
 // Interfaces
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IFinancialTransactionRepository, FinancialTransaction
 builder.Services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IMediaRepository, MediaRepository>();
+builder.Services.AddScoped<IInspectionRepository, InspectionRepository>();
 
 #endregion
 

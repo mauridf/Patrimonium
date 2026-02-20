@@ -12,9 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Mappings\" />
     <Folder Include="Observability\" />
-    <Folder Include="Storage\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,6 +7,7 @@ using Patrimonium.Application.Services;
 using Patrimonium.Infrastructure.Auth;
 using Patrimonium.Infrastructure.Data.Context;
 using Patrimonium.Infrastructure.Repositories;
+using Patrimonium.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +66,9 @@ builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<ContractService>();
 builder.Services.AddScoped<FinancialTransactionService>();
 builder.Services.AddScoped<MaintenanceService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<DocumentService>();
+builder.Services.AddScoped<MediaService>();
 
 // Interfaces
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -74,6 +78,8 @@ builder.Services.AddScoped<IPersonRepository, PersonRepository>();
 builder.Services.AddScoped<IContractRepository, ContractRepository>();
 builder.Services.AddScoped<IFinancialTransactionRepository, FinancialTransactionRepository>();
 builder.Services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IMediaRepository, MediaRepository>();
 
 #endregion
 

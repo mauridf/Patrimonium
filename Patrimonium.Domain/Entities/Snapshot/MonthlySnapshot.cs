@@ -1,5 +1,8 @@
-﻿namespace Patrimonium.Domain.Entities.Snapshot
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Patrimonium.Domain.Entities.Snapshot
 {
+    [Owned]
     public class MonthlySnapshot
     {
         public Guid Id { get; private set; }

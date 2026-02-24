@@ -25,6 +25,17 @@ namespace Patrimonium.Infrastructure.Data.Mappings
             builder.Property(x => x.ZipCode).IsRequired();
 
             builder.Property(x => x.CreatedAt).IsRequired();
+
+            builder.OwnsOne(p => p.Valuation, v =>
+            {
+                v.Property(x => x.EstimatedValue)
+                    .HasColumnName("estimated_value")
+                    .IsRequired();
+
+                v.Property(x => x.InvestedValue)
+                    .HasColumnName("invested_value")
+                    .IsRequired();
+            });
         }
     }
 }

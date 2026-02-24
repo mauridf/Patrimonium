@@ -1,5 +1,8 @@
-﻿namespace Patrimonium.Domain.Entities.Snapshot
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Patrimonium.Domain.Entities.Snapshot
 {
+    [Owned]
     public class OperationalSnapshot
     {
         public int ActiveProperties { get; }
@@ -8,6 +11,8 @@
         public int OpenMaintenances { get; }
         public decimal OccupancyRate { get; }
         public decimal VacancyRate { get; }
+
+        private OperationalSnapshot() { }
 
         public OperationalSnapshot(
             int activeProperties,

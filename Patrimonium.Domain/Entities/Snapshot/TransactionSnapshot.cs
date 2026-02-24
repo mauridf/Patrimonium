@@ -1,7 +1,9 @@
-﻿using Patrimonium.Domain.Enums;
+﻿using Microsoft.EntityFrameworkCore;
+using Patrimonium.Domain.Enums;
 
 namespace Patrimonium.Domain.Entities.Snapshot
 {
+    [Owned]
     public class TransactionSnapshot
     {
         public Guid TransactionId { get; }
@@ -12,6 +14,8 @@ namespace Patrimonium.Domain.Entities.Snapshot
         public TransactionCategory Category { get; }
         public decimal Amount { get; }
         public DateTime Date { get; }
+
+        private TransactionSnapshot() { }
 
         public TransactionSnapshot(
             Guid transactionId,

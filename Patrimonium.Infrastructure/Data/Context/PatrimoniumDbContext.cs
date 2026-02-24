@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Patrimonium.Domain.Entities;
+using Patrimonium.Infrastructure.Data.Configurations;
+using Patrimonium.Infrastructure.Data.Mappings;
 
 namespace Patrimonium.Infrastructure.Data.Context
 {
@@ -22,7 +24,19 @@ namespace Patrimonium.Infrastructure.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(PatrimoniumDbContext).Assembly);
+            modelBuilder.ApplyConfiguration(new MonthlyClosingConfiguration());
+
+            // configs existentes
+            modelBuilder.ApplyConfiguration(new UserMap());
+            modelBuilder.ApplyConfiguration(new PropertyMap());
+            modelBuilder.ApplyConfiguration(new PersonMap());
+            modelBuilder.ApplyConfiguration(new ContractMap());
+            modelBuilder.ApplyConfiguration(new FinancialTransactionMap());
+            modelBuilder.ApplyConfiguration(new MaintenanceMap());
+            modelBuilder.ApplyConfiguration(new InspectionMap());
+            modelBuilder.ApplyConfiguration(new DocumentMap());
+            modelBuilder.ApplyConfiguration(new MediaMap());
+
             base.OnModelCreating(modelBuilder);
         }
     }

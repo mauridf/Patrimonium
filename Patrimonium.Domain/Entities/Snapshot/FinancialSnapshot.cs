@@ -9,6 +9,8 @@
         public decimal NetResult { get; }
         public decimal CashFlow { get; }
 
+        private FinancialSnapshot() { }
+
         public FinancialSnapshot(
             decimal income,
             decimal expense,

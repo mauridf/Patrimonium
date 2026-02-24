@@ -1,5 +1,8 @@
-﻿namespace Patrimonium.Domain.Entities.Snapshot
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Patrimonium.Domain.Entities.Snapshot
 {
+    [Owned]
     public class PropertySnapshot
     {
         public Guid PropertyId { get; }
@@ -10,6 +13,8 @@
         public decimal Income { get; }
         public decimal Expense { get; }
         public decimal NetResult { get; }
+
+        private PropertySnapshot() { }
 
         public PropertySnapshot(
             Guid propertyId,

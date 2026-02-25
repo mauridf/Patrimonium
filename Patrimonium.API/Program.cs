@@ -60,6 +60,29 @@ builder.Services
 #endregion
 
 #region ==============================
+#region CORS
+#endregion ==============================
+var corsPolicyName = "FrontendPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName, policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:5173",   // Vite
+                "http://localhost:3000",   // React
+                "http://localhost:4200",   // Angular
+                "https://app.patrimonium.com" // produção (exemplo)
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+#endregion
+
+#region ==============================
 #region Injeção de Dependência (DI)
 #endregion ==============================
 
@@ -122,6 +145,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
+app.UseCors("FrontendPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
